@@ -6,6 +6,7 @@ using System.Net;
 using System.IO;
 using System.Collections;
 using System.Data.SqlTypes;
+using System.Data.Linq;
 
 namespace rtpupdate
 {
@@ -19,35 +20,97 @@ namespace rtpupdate
         public void execute()
         {
             // iterate over list of stations where last-harvest dates are less than today, ordered by last-harvest date ascending
-            foreach(var station in db.Stations.Where(s => s.LastHarvestDate.GetValueOrDefault(SqlDateTime.MinValue.Value).Date < DateTime.Now.Date).OrderBy(s => s.LastHarvestDate).ToList())
+            var list = db.Stations.Where(s => s.LastHarvestDate.GetValueOrDefault(SqlDateTime.MinValue.Value).Date < DateTime.Now.Date).OrderBy(s => s.LastHarvestDate).ToList();
+            foreach(var station in list)
             {
+                Console.WriteLine("Starting station " + station.StationName);
                 try
                 {
                     // foreach in list, process station (i.e. start with least last-accessed date)
                     var finalYear = DateTime.Now;
-                    var currentYear = station.LastHarvestDate.GetValueOrDefault(DateTime.MinValue);
+                    var currentYear = station.LastHarvestDate.GetValueOrDefault(new DateTime(1998, 1, 1));
+                    var lastDateWithoutError = DateTime.Now; // stores last date properly harvested before an error occurs in collection
                     while (currentYear.Year <= finalYear.Year)
                     {
-                        var values = extractValues(station.downloadData(currentYear), currentYear);
-                        foreach (var v in values)
+                        try
                         {
-                            v.StationID = station.StationID;
-                            db.DataValues.InsertOnSubmit(v);
+                            Console.WriteLine("Starting " + currentYear.Year + " for station " + station.StationName);
+                            var values = extractValues(station.downloadData(currentYear), currentYear);
+                            foreach (var v in values)
+                            {
+                                v.StationID = station.StationID;
+                                db.DataValues.InsertOnSubmit(v);
+                                db.SubmitChanges();
+                            }
+                            db.SubmitChanges();
+                            Console.WriteLine("Committed "+currentYear.Year +" for station "+station.StationName);
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("Error during " + currentYear.Year + " for station " + station.StationName+":"+ex.Message);
+                            if(!(ex.Message.Contains("403") || ex.Message.Contains("404"))) // 403 and 404 errors are okay
+                            {
+                                var potentialNewLastDate = new DateTime(currentYear.Year, 1, 1);
+                                if(potentialNewLastDate < lastDateWithoutError)
+                                {
+                                    lastDateWithoutError = potentialNewLastDate; // keep track of minimum error date so we restart harvesting from there next time
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine(ex.Message); // Weird error!
+                            }
                         }
 
                         currentYear = currentYear.AddYears(1);
+                        Console.WriteLine("Finished " + currentYear.Year + " for station " + station.StationName);
                     }
-                    station.LastHarvestDate = finalYear;
+                    clearChangesInsteadOfSubmittingChanges(db); // clean connection of any previous errors so the next line executes properly
+                    station.LastHarvestDate = lastDateWithoutError; //finalYear;
                     db.SubmitChanges();
+                    Console.WriteLine("Added");
                 }
-                catch
+                catch(Exception ex)
                 {
-                    db.GetChangeSet().Updates.Clear(); // clear updates
-                    db.GetChangeSet().Inserts.Clear(); // clear inserts
-                    db.GetChangeSet().Deletes.Clear(); // clear deletes
+                    // Big exception!
+                    //clearChangesInsteadOfSubmittingChanges(db);
+                    Console.WriteLine("BAD;" + ex.Message);
                     continue;
                 }
             }
+        }
+
+        public void clearChangesInsteadOfSubmittingChanges(rtpdbDataContext db)
+        {
+            /*db.GetChangeSet().Updates.Clear(); // clear updates
+                    db.GetChangeSet().Inserts.Clear(); // clear inserts
+                    db.GetChangeSet().Deletes.Clear(); // clear deletes*/
+            var changes = db.GetChangeSet();
+            foreach (var ins in changes.Inserts)
+            {
+                db.GetTable(ins.GetType()).DeleteOnSubmit(ins);
+            }
+            foreach (var ins in changes.Deletes)
+            {
+                db.GetTable(ins.GetType()).InsertOnSubmit(ins);
+            }
+            var updatedTables = new List<ITable>();
+            foreach (var update in changes.Updates)
+            {
+                var table = db.GetTable(update.GetType());
+                // Make sure not to refresh the same table twice
+                if (updatedTables.Contains(table))
+                {
+                    continue;
+                }
+                else
+                {
+                    updatedTables.Add(table);
+                    db.Refresh(RefreshMode.OverwriteCurrentValues, table);
+                }
+
+            }
+            db.SubmitChanges();
         }
         
         public int NthIndexOf(string s, string match, int n)
