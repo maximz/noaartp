@@ -1,24 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="rtp" Class="rtpdbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=localhost;Initial Catalog=rtp;Integrated Security=True" SettingsObjectName="rtpupdate.Properties.Settings" SettingsPropertyName="rtpConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.DataValues" Member="DataValues">
-    <Type Name="DataValue">
+  <Table Name="dbo.NOAADataValues" Member="NOAADataValues">
+    <Type Name="NOAADataValue">
       <Column Name="RecordID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="StationID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Rainfall" Type="System.Double" DbType="Float" CanBeNull="true" />
       <Column Name="High" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Low" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="Station_DataValue" Member="Station" ThisKey="StationID" OtherKey="StationID" Type="Station" IsForeignKey="true" />
+      <Association Name="NOAAStation_NOAADataValue" Member="NOAAStation" ThisKey="StationID" OtherKey="StationID" Type="NOAAStation" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Stations" Member="Stations">
-    <Type Name="Station">
+  <Table Name="dbo.NOAAStations" Member="NOAAStations">
+    <Type Name="NOAAStation">
       <Column Name="StationID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="StationSymbol" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="StationName" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
       <Column Name="LastHarvestDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="StationURL" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Association Name="Station_DataValue" Member="DataValues" ThisKey="StationID" OtherKey="StationID" Type="DataValue" />
+      <Association Name="NOAAStation_NOAADataValue" Member="NOAADataValues" ThisKey="StationID" OtherKey="StationID" Type="NOAADataValue" />
     </Type>
   </Table>
 </Database>

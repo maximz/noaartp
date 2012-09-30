@@ -2,23 +2,23 @@
 <ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="rtpdb">
   <DataContextMoniker Name="/rtpdbDataContext" />
   <nestedChildShapes>
-    <classShape Id="ff081f88-8913-4f70-84cb-6d46e1f63437" absoluteBounds="3.5, 0.875, 2, 1.9631982421875">
-      <DataClassMoniker Name="/rtpdbDataContext/DataValue" />
+    <classShape Id="194aceef-cd2b-4d30-ad32-7328559eae8d" absoluteBounds="3.5, 0.875, 2, 1.9631982421875">
+      <DataClassMoniker Name="/rtpdbDataContext/NOAADataValue" />
       <nestedChildShapes>
-        <elementListCompartment Id="9548806a-615f-457d-89b4-3ed47bf3b767" absoluteBounds="3.515, 1.335, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="9c8904e2-6738-4f11-908e-156376a21dc8" absoluteBounds="3.515, 1.335, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="4058f302-9ef6-4fa7-87f2-53a04f3bfd3d" absoluteBounds="0.75, 1, 2, 1.7708968098958331">
-      <DataClassMoniker Name="/rtpdbDataContext/Station" />
+    <classShape Id="3a93c845-1e74-429e-b3c3-942f3c0ea8f1" absoluteBounds="0.75, 1, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/rtpdbDataContext/NOAAStation" />
       <nestedChildShapes>
-        <elementListCompartment Id="68e7031d-3b5a-4239-bdea-247e01efedad" absoluteBounds="0.765, 1.46, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="220544ec-0128-4693-b372-a1069fb2da5f" absoluteBounds="0.765, 1.46, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <associationConnector edgePoints="[(2.75 : 1.88544840494792); (3.5 : 1.88544840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
-      <AssociationMoniker Name="/rtpdbDataContext/Station/Station_DataValue" />
+      <AssociationMoniker Name="/rtpdbDataContext/NOAAStation/NOAAStation_NOAADataValue" />
       <nodes>
-        <classShapeMoniker Id="4058f302-9ef6-4fa7-87f2-53a04f3bfd3d" />
-        <classShapeMoniker Id="ff081f88-8913-4f70-84cb-6d46e1f63437" />
+        <classShapeMoniker Id="3a93c845-1e74-429e-b3c3-942f3c0ea8f1" />
+        <classShapeMoniker Id="194aceef-cd2b-4d30-ad32-7328559eae8d" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

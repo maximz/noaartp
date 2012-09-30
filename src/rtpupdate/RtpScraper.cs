@@ -20,7 +20,7 @@ namespace rtpupdate
         public void execute()
         {
             // iterate over list of stations where last-harvest dates are less than today, ordered by last-harvest date ascending
-            var list = db.Stations.Where(s => s.LastHarvestDate.GetValueOrDefault(SqlDateTime.MinValue.Value).Date < DateTime.Now.Date).OrderBy(s => s.LastHarvestDate).ToList();
+            var list = db.NOAAStations.Where(s => s.LastHarvestDate.GetValueOrDefault(SqlDateTime.MinValue.Value).Date < DateTime.Now.Date).OrderBy(s => s.LastHarvestDate).ToList();
             foreach(var station in list)
             {
                 Console.WriteLine("Starting station " + station.StationName);
@@ -39,7 +39,7 @@ namespace rtpupdate
                             foreach (var v in values)
                             {
                                 v.StationID = station.StationID;
-                                db.DataValues.InsertOnSubmit(v);
+                                db.NOAADataValues.InsertOnSubmit(v);
                                 db.SubmitChanges();
                             }
                             db.SubmitChanges();
@@ -135,14 +135,14 @@ namespace rtpupdate
         /// <param name="html">The HTML.</param>
         /// <param name="startDate">The date from which to start adding data.</param>
         /// <returns></returns>
-        public IEnumerable<DataValue> extractValues(string html, DateTime startDate)
+        public IEnumerable<NOAADataValue> extractValues(string html, DateTime startDate)
         {
             foreach (string line in new LineReader(() => new StringReader(html)))
             {
-                DataValue value;
+                NOAADataValue value;
                 try
                 {
-                    value = new DataValue();
+                    value = new NOAADataValue();
                     
                     value.Date = DateTime.Parse(line.Substring(0, 8));
                     // Should we include this value?
@@ -184,7 +184,7 @@ namespace rtpupdate
         }
 
     }
-    public partial class Station
+    public partial class NOAAStation
     {
         public string downloadData(DateTime whichYear)
         {

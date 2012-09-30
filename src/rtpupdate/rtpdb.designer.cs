@@ -30,12 +30,12 @@ namespace rtpupdate
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertDataValue(DataValue instance);
-    partial void UpdateDataValue(DataValue instance);
-    partial void DeleteDataValue(DataValue instance);
-    partial void InsertStation(Station instance);
-    partial void UpdateStation(Station instance);
-    partial void DeleteStation(Station instance);
+    partial void InsertNOAADataValue(NOAADataValue instance);
+    partial void UpdateNOAADataValue(NOAADataValue instance);
+    partial void DeleteNOAADataValue(NOAADataValue instance);
+    partial void InsertNOAAStation(NOAAStation instance);
+    partial void UpdateNOAAStation(NOAAStation instance);
+    partial void DeleteNOAAStation(NOAAStation instance);
     #endregion
 		
 		public rtpdbDataContext() : 
@@ -68,25 +68,25 @@ namespace rtpupdate
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<DataValue> DataValues
+		public System.Data.Linq.Table<NOAADataValue> NOAADataValues
 		{
 			get
 			{
-				return this.GetTable<DataValue>();
+				return this.GetTable<NOAADataValue>();
 			}
 		}
 		
-		public System.Data.Linq.Table<Station> Stations
+		public System.Data.Linq.Table<NOAAStation> NOAAStations
 		{
 			get
 			{
-				return this.GetTable<Station>();
+				return this.GetTable<NOAAStation>();
 			}
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.DataValues")]
-	public partial class DataValue : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.NOAADataValues")]
+	public partial class NOAADataValue : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
@@ -103,7 +103,7 @@ namespace rtpupdate
 		
 		private System.Nullable<int> _Low;
 		
-		private EntityRef<Station> _Station;
+		private EntityRef<NOAAStation> _NOAAStation;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -123,9 +123,9 @@ namespace rtpupdate
     partial void OnLowChanged();
     #endregion
 		
-		public DataValue()
+		public NOAADataValue()
 		{
-			this._Station = default(EntityRef<Station>);
+			this._NOAAStation = default(EntityRef<NOAAStation>);
 			OnCreated();
 		}
 		
@@ -160,7 +160,7 @@ namespace rtpupdate
 			{
 				if ((this._StationID != value))
 				{
-					if (this._Station.HasLoadedOrAssignedValue)
+					if (this._NOAAStation.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -253,36 +253,36 @@ namespace rtpupdate
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Station_DataValue", Storage="_Station", ThisKey="StationID", OtherKey="StationID", IsForeignKey=true)]
-		public Station Station
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="NOAAStation_NOAADataValue", Storage="_NOAAStation", ThisKey="StationID", OtherKey="StationID", IsForeignKey=true)]
+		public NOAAStation NOAAStation
 		{
 			get
 			{
-				return this._Station.Entity;
+				return this._NOAAStation.Entity;
 			}
 			set
 			{
-				Station previousValue = this._Station.Entity;
+				NOAAStation previousValue = this._NOAAStation.Entity;
 				if (((previousValue != value) 
-							|| (this._Station.HasLoadedOrAssignedValue == false)))
+							|| (this._NOAAStation.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._Station.Entity = null;
-						previousValue.DataValues.Remove(this);
+						this._NOAAStation.Entity = null;
+						previousValue.NOAADataValues.Remove(this);
 					}
-					this._Station.Entity = value;
+					this._NOAAStation.Entity = value;
 					if ((value != null))
 					{
-						value.DataValues.Add(this);
+						value.NOAADataValues.Add(this);
 						this._StationID = value.StationID;
 					}
 					else
 					{
 						this._StationID = default(int);
 					}
-					this.SendPropertyChanged("Station");
+					this.SendPropertyChanged("NOAAStation");
 				}
 			}
 		}
@@ -308,8 +308,8 @@ namespace rtpupdate
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Stations")]
-	public partial class Station : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.NOAAStations")]
+	public partial class NOAAStation : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
@@ -324,7 +324,7 @@ namespace rtpupdate
 		
 		private string _StationURL;
 		
-		private EntitySet<DataValue> _DataValues;
+		private EntitySet<NOAADataValue> _NOAADataValues;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -342,9 +342,9 @@ namespace rtpupdate
     partial void OnStationURLChanged();
     #endregion
 		
-		public Station()
+		public NOAAStation()
 		{
-			this._DataValues = new EntitySet<DataValue>(new Action<DataValue>(this.attach_DataValues), new Action<DataValue>(this.detach_DataValues));
+			this._NOAADataValues = new EntitySet<NOAADataValue>(new Action<NOAADataValue>(this.attach_NOAADataValues), new Action<NOAADataValue>(this.detach_NOAADataValues));
 			OnCreated();
 		}
 		
@@ -448,16 +448,16 @@ namespace rtpupdate
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Station_DataValue", Storage="_DataValues", ThisKey="StationID", OtherKey="StationID")]
-		public EntitySet<DataValue> DataValues
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="NOAAStation_NOAADataValue", Storage="_NOAADataValues", ThisKey="StationID", OtherKey="StationID")]
+		public EntitySet<NOAADataValue> NOAADataValues
 		{
 			get
 			{
-				return this._DataValues;
+				return this._NOAADataValues;
 			}
 			set
 			{
-				this._DataValues.Assign(value);
+				this._NOAADataValues.Assign(value);
 			}
 		}
 		
@@ -481,16 +481,16 @@ namespace rtpupdate
 			}
 		}
 		
-		private void attach_DataValues(DataValue entity)
+		private void attach_NOAADataValues(NOAADataValue entity)
 		{
 			this.SendPropertyChanging();
-			entity.Station = this;
+			entity.NOAAStation = this;
 		}
 		
-		private void detach_DataValues(DataValue entity)
+		private void detach_NOAADataValues(NOAADataValue entity)
 		{
 			this.SendPropertyChanging();
-			entity.Station = null;
+			entity.NOAAStation = null;
 		}
 	}
 }
